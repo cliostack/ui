@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { absolute } from "./path.js";
+import { absolute } from "./path";
 import { z } from "zod";
 
 const configFileSchema = z.object({

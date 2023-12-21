@@ -2,19 +2,23 @@
   "name": "@cliox/ui",
   "version": "1.0.1",
   "description": "",
-  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild ./src/index.ts --bundle --outfile=./dist/index.js --platform=node",
+    "dev": "esbuild ./src/index.ts --bundle --outfile=./dist/index.js --platform=node --watch"
   },
-  "bin": "./src/bin/index.js",
+  "bin": "./dist/index.js",
   "author": "Vec",
   "license": "ISC",
   "dependencies": {
-    "chalk": "^5.3.0",
-    "cli-spinner": "^0.2.10",
     "commander": "^11.1.0",
-    "figlet": "^1.7.0",
-    "inquirer": "^9.2.12",
+    "ora": "^7.0.1",
+    "prompts": "^2.4.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "esbuild": "0.19.10"
   }
 }

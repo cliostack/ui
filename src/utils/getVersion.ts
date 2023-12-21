@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { absolute } from "./path.js";
+import { absolute } from "./path";
 
 export const getVersion = async () => {
   const packageJson = await fs.readFile(absolute("package.json"), "utf-8");
