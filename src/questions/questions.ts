@@ -1,8 +1,7 @@
 import prompts from "prompts";
 
-export enum Environment {
-  ReactNative = "react-native",
-  React = "react",
+export enum UIEnvironment {
+  ReactDOM = "dom",
 }
 export const questions = {
   ask: {
@@ -12,11 +11,11 @@ export const questions = {
         type: 'select',
         message: "Select an environment",
         choices: [
-          { title: "React Natve", value: Environment.ReactNative },
-          { title: "React", value: Environment.React },
+          // { title: "React Natve", value: UIEnvironment.ReactNative },
+          { title: "React DOM", value: UIEnvironment.ReactDOM },
         ],
       })
-      return response.env as Environment
+      return response.env as UIEnvironment
     }
 
   },

@@ -1,7 +1,10 @@
 {
   "name": "@cliox/ui",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "esbuild ./src/index.ts --bundle --outfile=./dist/index.js --platform=node",
@@ -14,11 +17,16 @@
     "commander": "^11.1.0",
     "ora": "^7.0.1",
     "prompts": "^2.4.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "clsx": "^2.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^2.2.0",
     "esbuild": "0.19.10"
   }
 }
