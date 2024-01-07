@@ -1,13 +1,17 @@
 import fs from "fs/promises";
-import { absolute } from "./path";
 import { z } from "zod";
+import { cwdAbsolute } from "./path";
 
 const configFileSchema = z.object({
-  src: z.string(),
+  imports: z.string(),
+  paths: z.object({
+    core: z.string(),
+    lib: z.string(),
+  }),
 });
 
 export const getConfig = async () => {
-  const configFile = await fs.readFile(absolute("cliox.json"), "utf-8");
+  const configFile = await fs.readFile(cwdAbsolute("cliox.config.json"), "utf-8");
   try {
     const config = JSON.parse(configFile);
     const configParsed = configFileSchema.parse(config);

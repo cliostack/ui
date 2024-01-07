@@ -1,6 +1,6 @@
-import path from 'path'
 import { UIEnvironment } from '../questions/questions'
 import { z } from 'zod'
+import { resolveUI } from '../utils/path';
 
 export const DOMComponentSchema = z.literal('vstack').or(z.literal('hstack')).or(z.literal('view'));
 export const DOMComponentCategorySchema = z.literal('layout')
@@ -15,9 +15,9 @@ export type UIMap = Record<UIEnvironment, DOMComponentCategoryMap>
 export const UIMap: UIMap = {
     dom: {
         layout: {
-            vstack: path.join(__dirname, 'src', 'ui', 'DOM', 'Layout', 'VStack.tsx'),
-            hstack: path.join(__dirname, 'src', 'ui', 'DOM', 'Layout', 'HStack.tsx'),
-            view: path.join(__dirname, 'src', 'ui', 'DOM', 'Layout', 'View.tsx'),
+            vstack: resolveUI('DOM/Layout/VStack.tsx'),
+            hstack: resolveUI('DOM/Layout/HStack.tsx'),
+            view: resolveUI('DOM/Layout/View.tsx'),
         }
     }
 }

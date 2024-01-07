@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "../../../utils/cn";
+import { cn } from "@/lib/cn";
 
 type VStackProps = {} & React.HTMLAttributes<HTMLDivElement>;
 const VStack = ({ className, children, ...rest }: VStackProps) => {

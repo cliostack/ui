@@ -5,28 +5,37 @@
   "publishConfig": {
     "access": "public"
   },
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "esbuild ./src/index.ts --bundle --outfile=./dist/index.js --platform=node",
-    "dev": "esbuild ./src/index.ts --bundle --outfile=./dist/index.js --platform=node --watch"
+    "build": "esbuild ./src/index.ts --bundle --outfile=./dist/index.js --platform=node --packages=external",
+    "dev": "tsup --watch"
   },
   "bin": "./dist/index.js",
+  "exports": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
   "author": "Vec",
   "license": "ISC",
   "dependencies": {
     "commander": "^11.1.0",
+    "esbuild-plugin-copy": "^2.1.1",
     "ora": "^7.0.1",
     "prompts": "^2.4.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^20.10.5",
+    "@types/prompts": "^2.4.9",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "clsx": "^2.0.0",
+    "esbuild": "0.19.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwind-merge": "^2.2.0",
-    "esbuild": "0.19.10"
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
   }
 }
