@@ -1,8 +1,7 @@
+import { UIEnvironment } from "@/ui/UIMap";
 import prompts from "prompts";
 
-export enum UIEnvironment {
-  ReactDOM = "dom",
-}
+
 export const questions = {
   ask: {
     env: async () => {

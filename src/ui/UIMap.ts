@@ -1,12 +1,31 @@
-import { UIEnvironment } from '../questions/questions'
 import { z } from 'zod'
 import { resolveUI } from '../utils/path';
+import chalk from 'chalk'
 
-export const DOMComponentSchema = z.literal('vstack').or(z.literal('hstack')).or(z.literal('view'));
-export const DOMComponentCategorySchema = z.literal('layout')
+export enum UIEnvironment {
+    ReactDOM = "dom",
+}
 
-export type DOMComponentCategory = z.infer<typeof DOMComponentCategorySchema>
+const DOMComponents = ['vstack', 'hstack', 'view'] as const;
+export const DOMComponentSchema = z.enum(DOMComponents, {
+    errorMap: (_, ctx) => {
+        return {
+            message: `Invalid component ${chalk.red(ctx.data)}. Available components are: ${chalk.green(DOMComponents.join(', '))}`
+        }
+    }
+});
+
+const DOMComponentCategories = ['layout'] as const;
+export const DOMComponentCategorySchema = z.enum(DOMComponentCategories, {
+    errorMap: (_, ctx) => {
+        return {
+            message: `Invalid component category ${chalk.red(ctx.data)}. Available component categories are: ${chalk.green(DOMComponentCategories.join(', '))}`
+        }
+    }
+});
+
 export type DOMComponent = z.infer<typeof DOMComponentSchema>
+export type DOMComponentCategory = z.infer<typeof DOMComponentCategorySchema>
 
 type DOMComponentsMap = Record<DOMComponent, string>
 type DOMComponentCategoryMap = Record<DOMComponentCategory, DOMComponentsMap>
