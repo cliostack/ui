@@ -1,8 +1,8 @@
 import { join } from "path";
 import { fileURLToPath } from "url";
 
-export const absolute = (...path: string[]) => {
-  return fileURLToPath(join(import.meta.url, '..', '..', ...path))
+export const absoluteToDist = (...path: string[]) => {
+  return fileURLToPath(join(import.meta.url, '..', ...path))
 };
 
 export const cwdAbsolute = (...path: string[]) => {
@@ -10,10 +10,10 @@ export const cwdAbsolute = (...path: string[]) => {
 }
 
 export const resolveUI = (...path: string[]) => {
-  return absolute(join('src', 'ui', ...path));
+  return absoluteToDist(join('src', 'ui', ...path));
 }
 
 
 export const resolveLib = (...path: string[]) => {
-  return absolute(join('src', 'lib', ...path));
+  return absoluteToDist(join('src', 'lib', ...path));
 }
