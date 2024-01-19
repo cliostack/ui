@@ -4,25 +4,37 @@ import fs from "fs/promises";
 import path, { join } from "path";
 import { questions } from "../questions/questions";
 import { getConfig } from "../utils/config";
-import { DOMComponentCategorySchema, DOMComponentSchema, UIMap } from "../ui/UIMap";
+import { XSchema } from "@/x/x.schema";
+import { XMap } from "@/x/x.map";
 
 export const add = new Command()
     .name("add")
     .description("Adds a new component")
     .argument("<name>", "Name of the component")
     .action(async (name: string) => {
-        const configSpinner = ora("Checking for cliox.config.json").start();
+        const configSpinner = ora("Validating your command").start();
         try {
             const config = await getConfig()
-            const [category, component] = name.split("/")
-            const parsedCategory = DOMComponentCategorySchema.safeParse(category)
-            if (!parsedCategory.success) {
-                configSpinner.fail(parsedCategory.error.issues[0].message)
+            const [space, category, component] = name.split("/")
+
+            // Make sure the user has provided a valid space
+            const spaceResult = XSchema.DOM.Space.safeParse(space)
+            if (!spaceResult.success) {
+                configSpinner.fail(spaceResult.error.issues[0].message)
                 process.exit(1)
             }
-            const parsedComponent = DOMComponentSchema.safeParse(component)
-            if (!parsedComponent.success) {
-                configSpinner.fail(parsedComponent.error.issues[0].message)
+
+            // Make sure the user has provided a valid category
+            const categoryResult = XSchema.DOM.Category.safeParse(category)
+            if (!categoryResult.success) {
+                configSpinner.fail(categoryResult.error.issues[0].message)
+                process.exit(1)
+            }
+
+            // Make sure the user has provided a valid component
+            const componentResult = XSchema.DOM.Component.safeParse(component)
+            if (!componentResult.success) {
+                configSpinner.fail(componentResult.error.issues[0].message)
                 process.exit(1)
             }
             configSpinner.succeed("Found a valid cliox.config.json");
@@ -30,18 +42,19 @@ export const add = new Command()
             const env = await questions.ask.env();
             const spinner = ora(`Adding component, Env: ${env}`).start();
 
-            const categoryFolderPath = join(config.paths.core, parsedCategory.data);
-            const categoryFolderExists = await fs.stat(categoryFolderPath).catch(() => false);
-            if (!categoryFolderExists) await fs.mkdir(categoryFolderPath);
+            const targetFolderPath = join(config.paths.core, spaceResult.data, categoryResult.data);
+            const categoryFolderExists = await fs.stat(targetFolderPath).catch(() => false);
+            if (!categoryFolderExists) await fs.mkdir(targetFolderPath, { recursive: true });
 
-            const internalComponentPath = UIMap[env][parsedCategory.data][parsedComponent.data]
-            const componentJsx = await fs.readFile(internalComponentPath, "utf-8");
+            const internalComponentPath = XMap[env][spaceResult.data][categoryResult.data][componentResult.data];
+            const componentJsx = await fs.readFile(internalComponentPath, "utf-8")
+
             const { name: componentName, ext: componentExt } = path.parse(internalComponentPath);
 
-            const componentPath = join(categoryFolderPath, `${componentName}${componentExt}`);
+            const componentPath = join(targetFolderPath, `${componentName}${componentExt}`);
             const doesComponentExist = await fs.stat(componentPath).catch(() => false);
             if (doesComponentExist) {
-                spinner.fail(`Component ${componentName} already exists`);
+                spinner.fail(`File ${componentName}${componentExt} already exists. Skipping...`);
                 process.exit(1);
             }
             await fs.writeFile(componentPath, componentJsx);

@@ -49,8 +49,8 @@ export const init = new Command()
             const coreFolder = await prompts({
                 type: 'text',
                 name: 'coreFolder',
-                message: 'Folder where core components will be stored',
-                initial: 'core/ui'
+                message: 'Core folder name',
+                initial: 'core'
             }).then(res => res.coreFolder);
 
             initSpinner.start();
@@ -94,6 +94,7 @@ export const init = new Command()
             });
 
             // Install deps
+            initSpinner.text = 'Installing dependencies';
             const packageManager = await getPackageManager(process.cwd())
             const deps = ['clsx', 'tailwind-merge']
             const installCommand = packageManager === 'npm' ? 'install' : 'add';

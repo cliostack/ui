@@ -1,4 +1,5 @@
-import { UIEnvironment } from "@/ui/UIMap";
+import { XConstants } from "@/x/x.constants";
+import { XEnvironment } from "@/x/x.schema";
 import prompts from "prompts";
 
 
@@ -11,10 +12,10 @@ export const questions = {
         message: "Select an environment",
         choices: [
           // { title: "React Natve", value: UIEnvironment.ReactNative },
-          { title: "React DOM", value: UIEnvironment.ReactDOM },
+          { title: "React DOM", value: XConstants.Environments[0] },
         ],
       })
-      return response.env as UIEnvironment
+      return response.env as XEnvironment
     }
 
   },

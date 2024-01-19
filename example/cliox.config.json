@@ -1,7 +1,7 @@
 {
   "imports": "src",
   "paths": {
-    "core": "src/core/ui",
+    "core": "src/core",
     "lib": "src/lib"
   }
 }

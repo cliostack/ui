@@ -11,8 +11,8 @@ const configFileSchema = z.object({
 });
 
 export const getConfig = async () => {
-  const configFile = await fs.readFile(cwdAbsolute("cliox.config.json"), "utf-8");
   try {
+    const configFile = await fs.readFile(cwdAbsolute("cliox.config.json"), "utf-8");
     const config = JSON.parse(configFile);
     const configParsed = configFileSchema.parse(config);
     return configParsed;
