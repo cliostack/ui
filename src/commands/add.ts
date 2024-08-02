@@ -2,67 +2,66 @@ import { Command } from "commander";
 import ora from "ora";
 import fs from "fs/promises";
 import path, { join } from "path";
-import { questions } from "../questions/questions";
 import { getConfig } from "../utils/config";
-import { XSchema } from "@/x/x.schema";
-import { XMap } from "@/x/x.map";
+import { LibrarySchema } from "@/library/schema";
+import { LibraryMap } from "@/library/map";
 
 export const add = new Command()
-    .name("add")
-    .description("Adds a new component")
-    .argument("<name>", "Name of the component")
-    .action(async (name: string) => {
-        const configSpinner = ora("Validating your command").start();
-        try {
-            const config = await getConfig()
-            const [space, category, component] = name.split("/")
+  .name("add")
+  .description("Adds a new component")
+  .argument("<name>", "Name of the component")
+  .action(async (name: string) => {
+    const configSpinner = ora("Validating your command").start();
+    try {
+      const config = await getConfig();
+      const [env, space, component] = name.split("/");
 
-            // Make sure the user has provided a valid space
-            const spaceResult = XSchema.DOM.Space.safeParse(space)
-            if (!spaceResult.success) {
-                configSpinner.fail(spaceResult.error.issues[0].message)
-                process.exit(1)
-            }
+      const envResult = LibrarySchema.Environment.safeParse(env);
+      if (!envResult.success) {
+        configSpinner.fail(envResult.error.issues[0].message);
+        process.exit(1);
+      }
 
-            // Make sure the user has provided a valid category
-            const categoryResult = XSchema.DOM.Category.safeParse(category)
-            if (!categoryResult.success) {
-                configSpinner.fail(categoryResult.error.issues[0].message)
-                process.exit(1)
-            }
+      // Make sure the user has provided a valid space
+      const spaceResult = LibrarySchema.Space.safeParse(space);
+      if (!spaceResult.success) {
+        configSpinner.fail(spaceResult.error.issues[0].message);
+        process.exit(1);
+      }
 
-            // Make sure the user has provided a valid component
-            const componentResult = XSchema.DOM.Component.safeParse(component)
-            if (!componentResult.success) {
-                configSpinner.fail(componentResult.error.issues[0].message)
-                process.exit(1)
-            }
-            configSpinner.succeed("Found a valid cliox.config.json");
+      // Make sure the user has provided a valid component
+      const componentResult = LibrarySchema.Component.safeParse(component);
+      if (!componentResult.success) {
+        configSpinner.fail(componentResult.error.issues[0].message);
+        process.exit(1);
+      }
 
-            const env = await questions.ask.env();
-            const spinner = ora(`Adding component, Env: ${env}`).start();
+      configSpinner.succeed("Found a valid cliox.config.json");
 
-            const targetFolderPath = join(config.paths.core, spaceResult.data, categoryResult.data);
-            const categoryFolderExists = await fs.stat(targetFolderPath).catch(() => false);
-            if (!categoryFolderExists) await fs.mkdir(targetFolderPath, { recursive: true });
+      const spinner = ora(`Adding component, Env: ${env}`).start();
 
-            const internalComponentPath = XMap[env][spaceResult.data][categoryResult.data][componentResult.data];
-            const componentJsx = await fs.readFile(internalComponentPath, "utf-8")
+      const targetFolderPath = join(config.paths.ui, spaceResult.data);
+      const categoryFolderExists = await fs.stat(targetFolderPath).catch(() => false);
+      if (!categoryFolderExists) await fs.mkdir(targetFolderPath, { recursive: true });
 
-            const { name: componentName, ext: componentExt } = path.parse(internalComponentPath);
+      const componentPath = LibraryMap[envResult.data][spaceResult.data][componentResult.data];
+      const componentJsx = await fs.readFile(componentPath, "utf-8");
 
-            const componentPath = join(targetFolderPath, `${componentName}${componentExt}`);
-            const doesComponentExist = await fs.stat(componentPath).catch(() => false);
-            if (doesComponentExist) {
-                spinner.fail(`File ${componentName}${componentExt} already exists. Skipping...`);
-                process.exit(1);
-            }
-            await fs.writeFile(componentPath, componentJsx);
-            spinner.succeed(`Added ${componentName} to core`);
-        } catch (error) {
-            console.error(error)
-            configSpinner.fail("Something went wrong. Please consider opening an issue at https://github.com/cliostack/cliox/issues");
-            process.exit(1);
-        }
+      const { name: componentName, ext: componentExt } = path.parse(componentPath);
 
-    });
+      const targetComponentPath = join(targetFolderPath, `${componentName}${componentExt}`);
+      const doesFileExists = await fs.stat(targetComponentPath).catch(() => false);
+      if (doesFileExists) {
+        spinner.fail(`File ${componentName}${componentExt} already exists. Skipping...`);
+        process.exit(1);
+      }
+      await fs.writeFile(targetComponentPath, componentJsx);
+      spinner.succeed(`Added ${componentName}${componentExt}`);
+    } catch (error) {
+      console.error(error);
+      configSpinner.fail(
+        "Something went wrong. Please consider opening an issue at https://github.com/cliostack/cliox/issues"
+      );
+      process.exit(1);
+    }
+  });

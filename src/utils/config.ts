@@ -5,7 +5,7 @@ import { cwdAbsolute } from "./path";
 const configFileSchema = z.object({
   imports: z.string(),
   paths: z.object({
-    core: z.string(),
+    ui: z.string(),
     lib: z.string(),
   }),
 });
